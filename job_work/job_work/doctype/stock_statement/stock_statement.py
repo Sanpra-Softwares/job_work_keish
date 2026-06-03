@@ -5,7 +5,6 @@ from frappe.utils import nowdate, nowtime
 from frappe.utils import flt
 from erpnext.stock.utils import get_stock_balance
 
-
 class StockStatement(Document):
 	# @frappe.whitelist()	
 	# def on_cancel(self):
@@ -13,7 +12,6 @@ class StockStatement(Document):
 	# 		frappe.db.set_value("Purchase Receipt",i.po_no,"custom_flag", 0)
 	# 	for j in self.outward:
 	# 		frappe.db.set_value("Delivery Note",j.cn,"custom_flag", 0)
-
 
 	# @frappe.whitelist()	
 	# def after_submit_js(self):
@@ -61,8 +59,8 @@ class StockStatement(Document):
 
 		# frappe.msgprint(str(opening_balance))
 		# self.opening_stock = opn_sum
-		open_stock = get_stock_balance(self.item_code, self.warehouse, self.from_date, '23:59:59')
-		self.opening_stock = open_stock
+		# open_stock = get_stock_balance(self.item_code, self.warehouse, self.from_date)
+		# self.opening_stock = open_stock
 		self.inward.clear()
 		self.outward.clear()
 		if isinstance(self.from_date, str):
@@ -132,7 +130,7 @@ class StockStatement(Document):
 						"mr_kg":item.custom_mr_kg,
 						"acr_kg":item.custom_acr_kg,
 						"rw_kg":item.custom_rw_kg,
-						"ok_kg":item.total_weight,
+						"ok_kg":item.custom_casting_weight,
 					})
 					tot_ok += item.custom_ok
 					tot_cr += item.custom_cr
@@ -153,11 +151,11 @@ class StockStatement(Document):
 		if self.casting_wgt:
 			self.casting_total_wgt = self.casting_wgt * (tot_cr + tot_mr)
 		self.balance = (self.opening_stock + self.total_inward) - self.total
-		self.cr_wgt = tot_cr_kg
-		self.mr_wgt = tot_mr_kg
-		self.cr_mr_wgt = tot_cr_kg + tot_mr_kg
-		if self.casting_wgt:
-			self.diff_wgt = self.casting_wgt * (self.casting_qty) - self.cr_mr_wgt
+		# self.cr_wgt = tot_cr_kg
+		# self.mr_wgt = tot_mr_kg
+		# self.cr_mr_wgt = tot_cr_kg + tot_mr_kg
+		# if self.casting_wgt:
+		# 	self.diff_wgt = self.casting_wgt * (self.casting_qty) - self.cr_mr_wgt
 		# single_wgt = self.casting_wgt - self.finish_weight
 		# self.ok_qty_boring = single_wgt * self.tot_ok
 		total_cr_kg = 0
@@ -171,5 +169,9 @@ class StockStatement(Document):
 		self.cr_wgt = total_cr_kg
 		self.mr_wgt = total_mr_kg
 		self.cr_mr_wgt = self.cr_wgt + self.mr_wgt
+		if self.casting_wgt:
+			self.diff_wgt = self.casting_total_wgt - (self.cr_wgt + self.mr_wgt)
+   
+#    (self.casting_wgt *(self.casting_qty) - (self.cr_mr_wgt))
   
 		

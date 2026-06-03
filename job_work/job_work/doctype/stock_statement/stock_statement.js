@@ -20,6 +20,40 @@
 //   });
 
 frappe.ui.form.on('Stock Statement', {
+    item_code: function (frm) {
+        get_opening_stock(frm);
+    },
+    from_date: function (frm) {
+        get_opening_stock(frm);
+    }
+});
+
+
+function get_opening_stock(frm) {
+        if (frm.doc.item_code && frm.doc.from_date) {
+            frappe.call({
+                method: 'erpnext.stock.utils.get_stock_balance',
+                args: {
+                    item_code: frm.doc.item_code,
+                    warehouse: frm.doc.warehouse || '',  // Optional: Use warehouse if needed
+                    posting_date: frm.doc.from_date,
+                    posting_time: '00:00:00'  // Get opening stock at the start of the day
+                },
+                callback: function (r) {
+                    if (r.message !== undefined) {
+                        frm.set_value('opening_stock', r.message);
+                        // frappe.msgprint(__('Opening Stock: {0}', [r.message]));
+                    } else {
+                        frm.set_value('opening_stock', 0);
+                        // frappe.msgprint(__('No opening stock found.'));
+                    }
+                }
+            });
+        }
+    }
+
+
+frappe.ui.form.on('Stock Statement', {
 	before_save(frm){
 		frm.clear_table("inward")
 		frm.refresh_field("inward")

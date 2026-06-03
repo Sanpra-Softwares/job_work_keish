@@ -131,13 +131,16 @@ doctype_js = {"Delivery Note" : "public/js/delivery_note.js",
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
+doc_events = {
+    "Delivery Note": {
+        "validate": "job_work.public.py.delivery_note.validate"
+    }
 # 	"*": {
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
 # 	}
-# }
+}
 
 # Scheduled Tasks
 # ---------------
