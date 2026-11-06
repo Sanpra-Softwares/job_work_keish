@@ -1,14 +1,14 @@
 frappe.ui.form.on('Delivery Note', {
-    customer: function(frm) {
-        frappe.db.get_value("Warehouse", {"warehouse_name": frm.doc.customer_name}, "name", function(value) {
-            if (value) {
-                let warehouse_name = value.name;
-                frm.set_value('set_warehouse', warehouse_name);
-            } else {
-                frappe.msgprint(__('Warehouse not found'));
-            }
-        });
-    },
+    // customer: function(frm) {
+    //     frappe.db.get_value("Warehouse", {"warehouse_name": frm.doc.customer_name}, "name", function(value) {
+    //         if (value) {
+    //             let warehouse_name = value.name;
+    //             frm.set_value('set_warehouse', warehouse_name);
+    //         } else {
+    //             frappe.msgprint(__('Warehouse not found'));
+    //         }
+    //     });
+    // },
     company: function(frm){
         if(frm.doc.company){
             set_filters(frm, 'item_code', 'items',[['Item', 'custom_company', '=', frm.doc.company]])
